@@ -19,12 +19,13 @@ function Login() {
 
     try {
       const resp = await axios.post(
-        "http://localhost:3200/api/v1/user/login",
+        `${import.meta.env.VITE_API_URL}/api/v1/user/login`,
         user,
         {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true
         }
       );
 

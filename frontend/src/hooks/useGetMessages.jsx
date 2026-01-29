@@ -12,15 +12,15 @@ const useGetMessages = (userId) => {
     const fetchMessages = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3200/api/v1/message/${userId}`,
+          `${import.meta.env.VITE_API_URL}/api/v1/message/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
+            withCredentials: true, // ✅ IMPORTANT
           }
         );
 
-        // 🔥 SAFE
         dispatch(setMessages(res.data?.conversation?.messages || []));
       } catch (error) {
         console.error("Fetch messages failed:", error);

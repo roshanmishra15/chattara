@@ -11,12 +11,14 @@ function Sidebar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
-  const { otherUsers } = useSelector(store => store.user);
+
+  const { otherUsers, allUsers } = useSelector((store) => store.user);
+
+  // 🔐 LOGOUT
   const logoutHandler = async () => {
     try {
-
       await axios.get(
-        "http://localhost:3200/api/v1/user/logout",
+        `${import.meta.env.VITE_API_URL}/api/v1/user/logout`,
         { withCredentials: true }
       );
 
@@ -33,29 +35,39 @@ function Sidebar() {
       toast.error("Logout failed");
     }
   };
+
+  // 🔍 SEARCH USER
   const searchSubmitHandler = (e) => {
     e.preventDefault();
-    const convestationUser = otherUsers?.find((user) => user.fullName.toLowerCase().includes(search.toLowerCase()))
-    if (convestationUser) {
-      dispatch(setOtherUsers([convestationUser]))
+
+    if (!search.trim()) {
+      toast.error("Please enter a username");
+      return;
     }
-    else{
-      toast.error("User Not Found")
+
+    const conversationUser = allUsers?.find((user) =>
+      user.fullname?.toLowerCase().includes(search.toLowerCase())
+    );
+
+    if (conversationUser) {
+      dispatch(setOtherUsers([conversationUser]));
+    } else {
+      toast.error("User not found");
     }
-  }
+
+    setSearch("");
+  };
 
   return (
     <div className="w-80 h-full bg-slate-900 text-slate-100 flex flex-col p-4 border-r border-slate-700">
 
-      {/* Search */}
+      {/* 🔍 Search */}
       <form onSubmit={searchSubmitHandler} className="flex items-center gap-2">
         <input
           type="text"
           value={search}
-          onChange={(e) => {
-            setSearch(e.target.value)
-          }}
-          placeholder="Search here..."
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search user..."
           className="w-full px-3 py-2 rounded-md bg-slate-800 text-sm text-slate-100 placeholder-slate-400 outline-none focus:ring-2 focus:ring-purple-500"
         />
         <button
@@ -68,10 +80,10 @@ function Sidebar() {
 
       <div className="my-4 h-px bg-slate-700"></div>
 
-      {/* Users */}
+      {/* 👥 Users */}
       <OtherUsers />
 
-      {/* Logout */}
+      {/* 🚪 Logout */}
       <div className="mt-auto pt-4">
         <button
           onClick={logoutHandler}

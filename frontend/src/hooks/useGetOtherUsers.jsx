@@ -13,11 +13,12 @@ function useGetOtherUsers() {
     const fetchOtherUsers = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3200/api/v1/user",
+          `${import.meta.env.VITE_API_URL}/api/v1/user`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
+            withCredentials:true
           }
         );
 

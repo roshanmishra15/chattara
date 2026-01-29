@@ -14,7 +14,7 @@ function SendInput() {
 
     try {
       await axios.post(
-        `http://localhost:3200/api/v1/message/send/${selectedUser._id}`,
+        `${import.meta.env.VITE_API_URL}/api/v1/message/send/${selectedUser._id}`,
         { message: text },
         {
           headers: {
