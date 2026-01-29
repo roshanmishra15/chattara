@@ -19,7 +19,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://chattara-4acyx5j5-itzroshan15-7782s-projects.vercel.app"
+    ],
     credentials: true,
   })
 );
