@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectdb from "./config/database.js";
-import userRoute from "./Routes/userRoutes.js";
+import userRoute from "./Routes/userRoutes.js";   // ✅ FIXED
 import messageRoute from "./Routes/messageRoute.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";

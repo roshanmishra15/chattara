@@ -2,12 +2,14 @@ import { io } from "socket.io-client";
 
 /**
  * Single global socket reference
- * ❌ NOT in Redux
- * ❌ NOT in component state
+ * ✅ NOT in Redux
+ * ✅ NOT in component state
  */
 export const socketRef = {
   current: null,
 };
+
+const SOCKET_URL = import.meta.env.VITE_API_URL;
 
 export const connectSocket = (userId) => {
   if (!userId) return;
@@ -15,9 +17,12 @@ export const connectSocket = (userId) => {
   // 🔥 prevent duplicate connections
   if (socketRef.current) return;
 
-  socketRef.current = io("http://localhost:3200", {
+  socketRef.current = io(SOCKET_URL, {
     transports: ["websocket"],
-    query: { userId },
+    withCredentials: true,
+    auth: {
+      userId, // ✅ MUST MATCH backend: socket.handshake.auth.userId
+    },
   });
 
   socketRef.current.on("connect", () => {
