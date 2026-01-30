@@ -1,39 +1,44 @@
 import { Server } from "socket.io";
 
-const userSocketMap = {}; // userId -> socketId
+const userSocketMap = {};
 let io;
 
 export const initSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: [
-        "http://localhost:5173",
-        "https://chattara-git-master-itzroshan15-7782s-projects.vercel.app"
-      ],
-      methods: ["GET", "POST"],
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+
+        if (origin.startsWith("http://localhost")) {
+          return callback(null, true);
+        }
+
+        if (origin.endsWith(".vercel.app")) {
+          return callback(null, true);
+        }
+
+        return callback(new Error("Socket CORS blocked"), false);
+      },
       credentials: true,
     },
   });
 
   io.on("connection", (socket) => {
-    // ✅ CORRECT WAY
-    const userId = socket.handshake.auth?.userId;
+    // ✅ FIXED
+    const userId = socket.handshake.auth.userId;
 
-    console.log("✅ Socket connected:", socket.id, "User:", userId);
+    console.log("✅ User connected:", socket.id, "userId:", userId);
 
     if (userId) {
       userSocketMap[userId] = socket.id;
     }
 
-    // Send online users list
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
     socket.on("disconnect", () => {
-      console.log("❌ Socket disconnected:", socket.id);
+      console.log("❌ User disconnected:", socket.id);
 
-      if (userId) {
-        delete userSocketMap[userId];
-      }
+      if (userId) delete userSocketMap[userId];
 
       io.emit("getOnlineUsers", Object.keys(userSocketMap));
     });
