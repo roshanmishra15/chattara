@@ -24,15 +24,12 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: (origin, callback) => {
-      // allow server-to-server & Postman
       if (!origin) return callback(null, true);
 
-      // allow localhost
       if (origin.startsWith("http://localhost")) {
         return callback(null, true);
       }
 
-      // allow ALL vercel deployments
       if (origin.endsWith(".vercel.app")) {
         return callback(null, true);
       }
@@ -40,13 +37,10 @@ app.use(
       return callback(new Error("CORS not allowed"), false);
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
-// 🔥 REQUIRED for preflight
-app.options("*", cors());
 
 /* =======================
    ROUTES
